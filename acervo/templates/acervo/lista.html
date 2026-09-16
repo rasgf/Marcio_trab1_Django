@@ -1,0 +1,21 @@
+{% extends 'acervo/base.html' %}
+
+{% block titulo %}Acervo — Biblioteca{% endblock %}
+
+{% block conteudo %}
+    <h2>Acervo</h2>
+
+    <ul class="lista-livros">
+        {% for livro in livros %}
+            <li>
+                <strong>{{ livro.titulo }}</strong> — {{ livro.autor }} ({{ livro.ano }})
+                <br>
+                <span class="tag">{{ livro.get_tipo_acervo_display }}</span>
+                <span class="tag">{{ livro.get_categoria_display }}</span>
+                <span class="tag">{% if livro.disponivel %}Disponível{% else %}Indisponível{% endif %}</span>
+            </li>
+        {% empty %}
+            <li>Nenhum livro cadastrado.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
