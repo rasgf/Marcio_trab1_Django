@@ -1,0 +1,122 @@
+[
+  {
+    "model": "acervo.livro",
+    "pk": 1,
+    "fields": {
+      "titulo": "Dom Casmurro",
+      "autor": "Machado de Assis",
+      "ano": 1899,
+      "disponivel": true,
+      "tipo_acervo": "fisico",
+      "categoria": "800"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 2,
+    "fields": {
+      "titulo": "Introdução à Física",
+      "autor": "David Halliday",
+      "ano": 2010,
+      "disponivel": true,
+      "tipo_acervo": "digital",
+      "categoria": "500"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 3,
+    "fields": {
+      "titulo": "Ética a Nicômaco",
+      "autor": "Aristóteles",
+      "ano": -350,
+      "disponivel": true,
+      "tipo_acervo": "fisico",
+      "categoria": "100"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 4,
+    "fields": {
+      "titulo": "Manual de Direito Constitucional",
+      "autor": "José Afonso da Silva",
+      "ano": 2018,
+      "disponivel": false,
+      "tipo_acervo": "fisico",
+      "categoria": "300"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 5,
+    "fields": {
+      "titulo": "Novo Dicionário Aurélio",
+      "autor": "Aurélio Buarque de Holanda",
+      "ano": 2009,
+      "disponivel": true,
+      "tipo_acervo": "digital",
+      "categoria": "400"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 6,
+    "fields": {
+      "titulo": "Fundamentos de Engenharia de Software",
+      "autor": "Ian Sommerville",
+      "ano": 2019,
+      "disponivel": true,
+      "tipo_acervo": "digital",
+      "categoria": "600"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 7,
+    "fields": {
+      "titulo": "História da Arte",
+      "autor": "Ernst Gombrich",
+      "ano": 2013,
+      "disponivel": true,
+      "tipo_acervo": "fisico",
+      "categoria": "700"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 8,
+    "fields": {
+      "titulo": "Memórias Póstumas de Brás Cubas",
+      "autor": "Machado de Assis",
+      "ano": 1881,
+      "disponivel": true,
+      "tipo_acervo": "fisico",
+      "categoria": "800"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 9,
+    "fields": {
+      "titulo": "Sapiens: Uma Breve História da Humanidade",
+      "autor": "Yuval Noah Harari",
+      "ano": 2011,
+      "disponivel": false,
+      "tipo_acervo": "digital",
+      "categoria": "900"
+    }
+  },
+  {
+    "model": "acervo.livro",
+    "pk": 10,
+    "fields": {
+      "titulo": "O Nome da Rosa",
+      "autor": "Umberto Eco",
+      "ano": 1980,
+      "disponivel": true,
+      "tipo_acervo": "fisico",
+      "categoria": "200"
+    }
+  }
+]
