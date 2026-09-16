@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+db.sqlite3
+.env
+*.txt.bak
+aula04.txt
+aula05.txt
+*.pdf
