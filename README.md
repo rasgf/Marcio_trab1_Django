@@ -7,6 +7,10 @@ pesquisa.
 
 **[Ver o diagrama e a explicação das features da P1 (site)](https://rasgf.github.io/Marcio_trab1_Django/)**
 
+O sistema em si (a Biblioteca rodando de verdade) precisa de um servidor
+Python de verdade, o GitHub Pages não roda Django. Instruções de deploy
+no Render logo abaixo, na seção "Colocando o site no ar".
+
 ## Requisitos do trabalho
 
 Ver [`docs/enunciado.txt`](docs/enunciado.txt). Resumo do que foi
@@ -67,6 +71,34 @@ Acesse:
 - `http://127.0.0.1:8000/livros/` — lista e busca de livros
 - `http://127.0.0.1:8000/livros/novo/` — cadastrar um livro
 - `http://127.0.0.1:8000/admin/` — Django Admin
+
+## Colocando o site no ar (Render)
+
+O repositório já vem pronto pra isso (`render.yaml`, `gunicorn`,
+`whitenoise` pros arquivos estáticos). Falta só conectar sua conta:
+
+1. Crie uma conta gratuita em [render.com](https://render.com) (dá pra
+   entrar direto com login do GitHub, não pede cartão).
+2. No painel, clique em **New +** e depois em **Blueprint**.
+3. Escolha o repositório `Marcio_trab1_Django` (autorize o Render a ler
+   seus repositórios se ele pedir).
+4. O Render lê o `render.yaml` sozinho e mostra o serviço `biblioteca`
+   configurado. Ele vai pedir o valor de `ADMIN_PASSWORD` (deixei como
+   secreto de propósito, então não fica salvo no repositório): escolha
+   uma senha ali.
+5. Clique em **Apply**. O primeiro build demora alguns minutos: instala
+   as dependências, roda as migrações, carrega os 10 livros de exemplo e
+   cria o usuário admin.
+6. No final o Render mostra uma URL parecida com
+   `https://biblioteca-xxxx.onrender.com`. É essa URL que vai pro
+   professor.
+
+No plano gratuito, se ninguém acessar por um tempo o serviço entra em
+modo de espera, e a próxima pessoa que abrir o link espera uns 30 a 50
+segundos ele voltar. É assim mesmo no plano free, não é erro.
+
+Login do admin depois do deploy: usuário `admin`, senha é a que você
+escolheu no passo 4.
 
 ## Pesquisa
 
