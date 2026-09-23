@@ -163,9 +163,6 @@ exibir do lado do campo, sem nenhum código extra nosso.
 
 ### Por que escolhi esses campos e essa regra
 
-O enunciado da P1 pede pra justificar as duas escolhas e explicar o que
-aconteceria se elas não existissem, então deixo isso registrado aqui.
-
 Na Feature 1 busco por título e autor porque é isso que uma pessoa lembra
 quando quer achar um livro, ninguém decora o número do registro dentro do
 sistema. O filtro por categoria faz sentido porque o acervo já é dividido
