@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Da URL ao HTML</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
+<style>
+  :root {
+    --bg: #f2f4f7;
+    --surface: #ffffff;
+    --ink: #1b2430;
+    --ink-soft: #57626e;
+    --line: #d7dee5;
+    --accent: #0c7d8c;
+    --accent-soft: #e2f2f3;
+    --danger: #b3453c;
+    --danger-soft: #f8e7e5;
+    --success: #3f7d54;
+    --success-soft: #e6f1e8;
+    --code-bg: #eef1f4;
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12181f;
+      --surface: #1a222b;
+      --ink: #e8edf2;
+      --ink-soft: #9aa7b3;
+      --line: #2c3742;
+      --accent: #3fbccb;
+      --accent-soft: #163338;
+      --danger: #e2867d;
+      --danger-soft: #3a2422;
+      --success: #85c399;
+      --success-soft: #1f3327;
+      --code-bg: #10161c;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #12181f;
+    --surface: #1a222b;
+    --ink: #e8edf2;
+    --ink-soft: #9aa7b3;
+    --line: #2c3742;
+    --accent: #3fbccb;
+    --accent-soft: #163338;
+    --danger: #e2867d;
+    --danger-soft: #3a2422;
+    --success: #85c399;
+    --success-soft: #1f3327;
+    --code-bg: #10161c;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-inline: 16px;
+    padding-block: 32px 64px;
+  }
+
+  header.page {
+    margin-bottom: 28px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  section {
+    margin-block: 44px;
+  }
+
+  h2 {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  p { margin: 0 0 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  .section-note {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    margin: 0 0 18px;
+    max-width: 62ch;
+  }
+
+  /* --- diagram --- */
+
+  figure.diagram {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 12px 4px;
+  }
+
+  figure.diagram svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  figcaption {
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    padding: 10px 6px 14px;
+    border-top: 1px solid var(--line);
+    margin-top: 10px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 14px;
+  }
+
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  /* --- code blocks --- */
+
+  .code {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .code .path {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .code ol {
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    counter-reset: line;
+  }
+
+  .code li {
+    display: flex;
+    counter-increment: line;
+    padding: 1px 14px;
+    white-space: pre;
+  }
+
+  .code li::before {
+    content: counter(line);
+    color: var(--ink-soft);
+    opacity: 0.6;
+    width: 2.2em;
+    flex: none;
+    text-align: right;
+    margin-right: 14px;
+  }
+
+  .code li.hl-accent { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .code li.hl-danger { background: var(--danger-soft); border-left: 3px solid var(--danger); }
+  .code li.hl-success { background: var(--success-soft); border-left: 3px solid var(--success); }
+  .code li:not(.hl-accent):not(.hl-danger):not(.hl-success) { border-left: 3px solid transparent; }
+
+  .callout {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  .callout.accent { background: var(--accent-soft); }
+  .callout.danger { background: var(--danger-soft); }
+  .callout.success { background: var(--success-soft); }
+  .callout.neutral { background: var(--surface); border: 1px solid var(--line); }
+
+  .callout .tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 5px;
+    flex: none;
+    line-height: 1.6;
+  }
+
+  .callout.accent .tag { background: var(--accent); color: #fff; }
+  .callout.danger .tag { background: var(--danger); color: #fff; }
+  .callout.success .tag { background: var(--success); color: #fff; }
+
+  .callout p { margin: 0; color: var(--ink); }
+
+  .fix-box {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ink-soft);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: var(--surface);
+  }
+
+  .fix-box .commit {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .decisions {
+    display: grid;
+    gap: 16px;
+  }
+
+  .decision {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .decision .feature-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 6px;
+  }
+
+  footer.page {
+    color: var(--ink-soft);
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+    margin-top: 48px;
+  }
+
+  footer.page a { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .code { font-size: 11.5px; }
+    .code li::before { width: 1.6em; margin-right: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <p class="eyebrow">Biblioteca &middot; Prova P1 &middot; Django</p>
+    <h1>Da URL ao HTML</h1>
+    <p class="lede">O caminho completo de uma requisição no projeto Biblioteca, e onde exatamente as duas features da P1 (busca com filtro e validação customizada) entram nesse caminho.</p>
+  </header>
+
+  <section>
+    <h2>O mecanismo</h2>
+    <p class="section-note">O navegador manda uma única requisição. O <code>urls.py</code> decide, só pelo endereço e pelo método (GET ou POST), qual das duas rotas abaixo ela segue. As duas rotas sempre terminam devolvendo HTML de volta, só que o que acontece no meio é bem diferente.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 1200 560" role="img" aria-label="Diagrama mostrando uma requisição saindo do navegador, passando pelo roteamento do urls.py, e se dividindo em duas rotas: GET /livros/ que busca e filtra livros no banco antes de renderizar a lista, e POST /livros/novo/ que valida o formulário checando se o ano é futuro antes de salvar ou devolver um erro.">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+          </marker>
+        </defs>
+
+        <g fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.55" font-family="IBM Plex Mono, monospace">
+          <line x1="160" y1="245" x2="184" y2="245" marker-end="url(#arrow)" />
+          <line x1="330" y1="228" x2="396" y2="105" marker-end="url(#arrow)" />
+          <line x1="330" y1="262" x2="396" y2="415" marker-end="url(#arrow)" />
+          <line x1="560" y1="90" x2="596" y2="90" marker-end="url(#arrow)" />
+          <line x1="770" y1="90" x2="826" y2="90" marker-end="url(#arrow)" />
+          <line x1="1000" y1="90" x2="1026" y2="90" marker-end="url(#arrow)" />
+          <line x1="560" y1="430" x2="596" y2="430" marker-end="url(#arrow)" />
+          <line x1="770" y1="430" x2="818" y2="430" marker-end="url(#arrow)" />
+        </g>
+
+        <g font-family="IBM Plex Mono, monospace">
+          <line x1="915" y1="386" x2="1027" y2="362" stroke="var(--danger)" stroke-width="1.6" fill="none" />
+          <polygon points="1027,362 1015,357 1017,368" fill="var(--danger)" />
+          <text x="965" y="368" font-size="12" fill="var(--danger)" text-anchor="middle">sim</text>
+
+          <line x1="915" y1="474" x2="1027" y2="498" stroke="var(--success)" stroke-width="1.6" fill="none" />
+          <polygon points="1027,498 1015,493 1017,504" fill="var(--success)" />
+          <text x="965" y="518" font-size="12" fill="var(--success)" text-anchor="middle">não</text>
+        </g>
+
+        <text x="400" y="32" font-size="13" font-weight="700" fill="var(--accent)" font-family="IBM Plex Mono, monospace">FEATURE 1: GET /livros/ (listar e buscar)</text>
+        <text x="400" y="377" font-size="13" font-weight="700" fill="var(--accent)" font-family="IBM Plex Mono, monospace">FEATURE 2: POST /livros/novo/ (cadastrar e validar)</text>
+
+        <text x="362" y="150" font-size="11" fill="currentColor" opacity="0.75" font-family="IBM Plex Mono, monospace">GET /livros/</text>
+        <text x="362" y="352" font-size="11" fill="currentColor" opacity="0.75" font-family="IBM Plex Mono, monospace">POST /novo/</text>
+        <text x="798" y="80" font-size="11" fill="currentColor" opacity="0.75" font-family="IBM Plex Mono, monospace">.filter()</text>
+
+        <g font-family="IBM Plex Sans, sans-serif">
+          <rect x="20" y="210" width="140" height="70" rx="10" fill="var(--surface)" stroke="var(--line)" />
+          <text x="90" y="240" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">Navegador</text>
+          <text x="90" y="258" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">usuário</text>
+
+          <rect x="190" y="210" width="140" height="70" rx="10" fill="var(--surface)" stroke="var(--line)" />
+          <text x="260" y="240" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">urls.py</text>
+          <text x="260" y="258" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">roteamento</text>
+        </g>
+
+        <g font-family="IBM Plex Sans, sans-serif">
+          <rect x="400" y="55" width="160" height="70" rx="10" fill="var(--surface)" stroke="var(--line)" />
+          <text x="480" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">lista_livros()</text>
+          <text x="480" y="103" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">views.py :8</text>
+
+          <rect x="600" y="55" width="170" height="70" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6" />
+          <text x="685" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">Q() combinado</text>
+          <text x="685" y="103" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">views.py :18-24</text>
+
+          <rect x="830" y="55" width="170" height="70" rx="10" fill="var(--surface)" stroke="var(--line)" />
+          <text x="915" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">SELECT no banco</text>
+          <text x="915" y="103" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">.filter(filtro)</text>
+
+          <rect x="1030" y="55" width="140" height="70" rx="10" fill="var(--surface)" stroke="var(--line)" />
+          <text x="1100" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">HTML 200</text>
+          <text x="1100" y="103" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">lista.html</text>
+        </g>
+
+        <g font-family="IBM Plex Sans, sans-serif">
+          <rect x="400" y="395" width="160" height="70" rx="10" fill="var(--surface)" stroke="var(--line)" />
+          <text x="480" y="425" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">novo_livro()</text>
+          <text x="480" y="443" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">views.py :39-41</text>
+
+          <rect x="600" y="395" width="170" height="70" rx="10" fill="var(--surface)" stroke="var(--line)" />
+          <text x="685" y="425" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">is_valid()</text>
+          <text x="685" y="443" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">chama clean_ano()</text>
+
+          <polygon points="915,385 1010,430 915,475 820,430" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6" />
+          <text x="915" y="426" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">ano</text>
+          <text x="915" y="440" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">futuro?</text>
+
+          <rect x="1030" y="330" width="140" height="60" rx="10" fill="var(--danger-soft)" stroke="var(--danger)" stroke-width="1.6" />
+          <text x="1100" y="355" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Erro no form</text>
+          <text x="1100" y="372" text-anchor="middle" font-size="10" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">forms.py :16-18</text>
+
+          <rect x="1030" y="470" width="140" height="60" rx="10" fill="var(--success-soft)" stroke="var(--success)" stroke-width="1.6" />
+          <text x="1100" y="495" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Salva + redirect</text>
+          <text x="1100" y="512" text-anchor="middle" font-size="10" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace">views.py :43-44</text>
+        </g>
+      </svg>
+
+      <figcaption>
+        Uma requisição entra pela esquerda e se divide em duas rotas conforme a URL e o método HTTP. Na rota de cima (Feature 1), <code>Q()</code> combina os três critérios de busca antes de uma única consulta ao banco. Na rota de baixo (Feature 2), <code>is_valid()</code> aciona <code>clean_ano()</code>, que decide entre devolver o formulário com erro ou salvar o registro.
+      </figcaption>
+
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--accent)"></span>lógica escrita para a P1 (não vem pronta do Django)</span>
+        <span><span class="swatch" style="background:var(--danger)"></span>caminho de erro</span>
+        <span><span class="swatch" style="background:var(--success)"></span>caminho de sucesso</span>
+      </div>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Feature 1: Busca e Filtro</h2>
+    <p class="section-note">Tudo acontece dentro da função <code>lista_livros</code>, em <code>acervo/views.py</code>. Nenhuma dessas linhas é mágica do Django, é lógica comum de filtrar uma lista, só que descrita pro banco de dados executar em vez de rodar um <code>for</code> em Python.</p>
+
+    <div class="code">
+      <div class="path">acervo/views.py</div>
+      <ol start="8">
+        <li>def lista_livros(request):</li>
+        <li>    nome = request.GET.get('q', '').strip()</li>
+        <li>    tipo = request.GET.get('tipo', '')</li>
+        <li>    categoria = request.GET.get('categoria', '')</li>
+        <li> </li>
+        <li class="hl-accent">    filtro = Q()</li>
+        <li class="hl-accent">    if nome:</li>
+        <li class="hl-accent">        filtro &amp;= Q(titulo__icontains=nome) | Q(autor__icontains=nome)</li>
+        <li class="hl-accent">    if tipo:</li>
+        <li class="hl-accent">        filtro &amp;= Q(tipo_acervo=tipo)</li>
+        <li class="hl-accent">    if categoria:</li>
+        <li class="hl-accent">        filtro &amp;= Q(categoria=categoria)</li>
+        <li> </li>
+        <li>    livros = Livro.objects.filter(filtro)</li>
+      </ol>
+    </div>
+
+    <div class="callout neutral">
+      <span class="tag">L9-11</span>
+      <p><strong><code>request.GET.get('q', '')</code></strong> pega o valor que veio na URL <code>/livros/?q=machado</code>, que chega pro Django como um dicionário de pares chave-valor. O segundo argumento (<code>''</code>) é usado quando a chave não existe, pra não precisar checar isso na mão.</p>
+    </div>
+
+    <div class="callout accent">
+      <span class="tag">L18-24</span>
+      <p><strong><code>Q()</code></strong> guarda uma condição lógica numa variável, em vez de aplicá-la na hora. Isso é necessário aqui porque a busca por texto precisa de <strong>OU</strong> (título OU autor), e a forma simples de filtrar do Django (<code>filter(campo=valor)</code>) só sabe fazer <strong>E</strong>. O <code>&amp;=</code> vai encaixando cada novo critério preenchido com E na condição toda; se um filtro não foi preenchido, ele simplesmente não entra.</p>
+    </div>
+
+    <div class="callout neutral">
+      <span class="tag">L27</span>
+      <p><strong><code>Livro.objects.filter(filtro)</code></strong> é o equivalente a pedir "dessa lista de livros, me devolva só os que batem com essa condição". O SQL de verdade (um <code>SELECT ... WHERE ...</code>) só é montado e executado quando o resultado é realmente usado lá no template.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Feature 2: Validação Customizada</h2>
+    <p class="section-note">Aqui a lógica mora em <code>acervo/forms.py</code>, dentro do formulário que já é gerado automaticamente a partir do model <code>Livro</code>. O Django chama esse método sozinho, não existe nenhuma linha no projeto que diga <code>clean_ano()</code> explicitamente. É uma convenção de nome: qualquer método <code>clean_&lt;campo&gt;</code> dentro do formulário é chamado durante a validação.</p>
+
+    <div class="code">
+      <div class="path">acervo/forms.py</div>
+      <ol start="12">
+        <li>    def clean_ano(self):</li>
+        <li class="hl-accent">        ano = self.cleaned_data.get('ano')</li>
+        <li class="hl-accent">        ano_atual = timezone.now().year</li>
+        <li class="hl-danger">        if ano and ano > ano_atual:</li>
+        <li class="hl-danger">            raise forms.ValidationError(</li>
+        <li class="hl-danger">                f'O ano de publicação não pode ser posterior a {ano_atual}.'</li>
+        <li class="hl-danger">            )</li>
+        <li class="hl-success">        return ano</li>
+      </ol>
+    </div>
+
+    <div class="callout neutral">
+      <span class="tag">nome do método</span>
+      <p><strong><code>clean_ano</code></strong> não é chamado por nenhuma linha do nosso código, é o Django que procura, durante <code>form.is_valid()</code>, por um método com esse nome exato (<code>clean_</code> mais o nome do campo) e o executa sozinho. É o mesmo princípio de convenção sobre configuração que faz o <code>startapp</code> gerar arquivos com nomes fixos.</p>
+    </div>
+
+    <div class="callout accent">
+      <span class="tag">L13-14</span>
+      <p><strong><code>self.cleaned_data.get('ano')</code></strong> é um dicionário com os valores já convertidos pro tipo certo (aqui, <code>ano</code> já é um <code>int</code>, não uma string vinda do input). <code>timezone.now().year</code> é só o ano atual de verdade.</p>
+    </div>
+
+    <div class="callout danger">
+      <span class="tag">L15-18</span>
+      <p><strong><code>raise forms.ValidationError(...)</code></strong> é igual a lançar uma exceção em qualquer linguagem: interrompe o fluxo normal e carrega uma mensagem. O Django captura essa exceção automaticamente, marca o campo <code>ano</code> como inválido e guarda a mensagem, que <code>{{ form.as_p }}</code> (no template) já sabe exibir do lado do campo, sem nenhum código extra nosso.</p>
+    </div>
+
+    <div class="callout success">
+      <span class="tag">L19</span>
+      <p><strong><code>return ano</code></strong> é obrigatório: todo método <code>clean_&lt;campo&gt;</code> precisa devolver o valor de volta (validado ou não), senão o Django assume que o campo virou vazio.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Uma correção</h2>
+    <div class="fix-box">
+      <p>Na explicação anterior (e no comentário que ficou no código), eu disse que combinar os três filtros num único <code>Q()</code> evitava fazer uma consulta ao banco por filtro. Isso estava errado: o <code>QuerySet</code> do Django é <em>lazy</em>. Encadear <code>.filter()</code> várias vezes só empilha condições, sem tocar o banco, e o SQL só roda uma vez, quando o resultado é de fato usado. Pra três critérios simples como os nossos, sem relacionamento entre tabelas, <code>.filter()</code> encadeado e um <code>Q()</code> combinado geram exatamente a mesma consulta.</p>
+      <p>O motivo real de precisar do <code>Q()</code> é outro, e está explicado na seção da Feature 1 acima: é a única forma de escrever <strong>OU</strong> dentro de um filtro. Corrigi o comentário no código e registrei isso num commit à parte.</p>
+      <p class="commit">commit ef9b644: docs, corrigir explicação do Q() no comentário (não é sobre performance)</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Para o parágrafo do relatório da P1</h2>
+    <p class="section-note">O enunciado pede um parágrafo curto justificando o campo/categoria escolhido na Feature 1 e a regra escolhida na Feature 2, e o porquê de cada uma. Aqui está o que já ficou decidido e implementado.</p>
+
+    <div class="decisions">
+      <div class="decision">
+        <p class="feature-tag">Feature 1</p>
+        <p>Busca por <strong>título e autor</strong> (texto livre) combinada com filtro por <strong>categoria</strong> (as 10 classes do acervo) e por <strong>tipo de acervo</strong>. Escolhi título e autor porque é o que uma pessoa realmente lembra ao procurar um livro numa biblioteca, ninguém busca pelo ID interno do registro. Categoria virou o filtro principal por ter subconjuntos com significado real (10 classes fixas), diferente de um campo booleano como disponível, que só tem dois estados.</p>
+      </div>
+      <div class="decision">
+        <p class="feature-tag">Feature 2</p>
+        <p>Validação de que o <strong>ano de publicação não pode ser posterior ao ano atual</strong>. A checagem automática do Django garante só que o campo é um número inteiro preenchido, ela não sabe nada sobre o significado desse número. Sem essa regra, o sistema aceitaria cadastrar um livro com ano 3000, o que não faz sentido: o item já precisa existir, ter sido publicado, para poder ser catalogado. É uma regra de negócio do domínio, não de tipo de dado, por isso só um <code>clean_ano()</code> escrito à mão resolve.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page">
+    Projeto Biblioteca &middot; Laboratório de Programação Full Stack &middot; Aulas 4-5 + P1 &middot;
+    <a href="https://github.com/rasgf/Marcio_trab1_Django">repositório no GitHub</a>
+  </footer>
+
+</div>
+</body>
+</html>
