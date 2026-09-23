@@ -5,6 +5,8 @@ migrações, ORM e Admin) e da **Aula 5** (views, URLs, templates e forms),
 com os requisitos adicionais do trabalho: tipo de acervo, categoria e
 pesquisa.
 
+**[Ver o diagrama e a explicação das features da P1 (site)](https://rasgf.github.io/Marcio_trab1_Django/)**
+
 ## Requisitos do trabalho
 
 Ver [`docs/enunciado.txt`](docs/enunciado.txt). Resumo do que foi
