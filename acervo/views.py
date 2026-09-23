@@ -6,18 +6,23 @@ from .models import Livro
 
 
 def lista_livros(request):
-    livros = Livro.objects.all()
-
     nome = request.GET.get('q', '').strip()
     tipo = request.GET.get('tipo', '')
     categoria = request.GET.get('categoria', '')
 
+    # Todos os critérios preenchidos entram na MESMA consulta, combinados
+    # com Q() — em vez de encadear .filter() várias vezes — para não
+    # disparar uma query por filtro quando o usuário combina busca + tipo
+    # + categoria ao mesmo tempo.
+    filtro = Q()
     if nome:
-        livros = livros.filter(Q(titulo__icontains=nome) | Q(autor__icontains=nome))
+        filtro &= Q(titulo__icontains=nome) | Q(autor__icontains=nome)
     if tipo:
-        livros = livros.filter(tipo_acervo=tipo)
+        filtro &= Q(tipo_acervo=tipo)
     if categoria:
-        livros = livros.filter(categoria=categoria)
+        filtro &= Q(categoria=categoria)
+
+    livros = Livro.objects.filter(filtro)
 
     contexto = {
         'livros': livros,
