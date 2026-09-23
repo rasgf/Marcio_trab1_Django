@@ -77,6 +77,112 @@ query string:
 
 Exemplo: `/livros/?q=machado&categoria=800`
 
+## Como as duas features do P1 funcionam
+
+Essas duas features (busca combinada e validação customizada) fazem parte
+da entrega do P1, além do CRUD das Aulas 4 a 6. Documentei aqui como cada
+uma funciona por dentro, pra ficar registrado o motivo de cada escolha.
+
+### O fluxo da requisição
+
+```mermaid
+flowchart LR
+    A[Navegador] --> B[urls.py roteamento]
+    B -->|GET /livros/| C[lista_livros]
+    B -->|POST /livros/novo/| D[novo_livro]
+    C --> E[Q combinado]
+    E --> F[SELECT no banco]
+    F --> G[lista.html HTML 200]
+    D --> H[LivroForm.is_valid]
+    H --> I{ano futuro?}
+    I -->|sim| J[Erro no form]
+    I -->|nao| K[Salva e redireciona]
+
+    style E fill:#e2f2f3,stroke:#0c7d8c
+    style I fill:#e2f2f3,stroke:#0c7d8c
+    style J fill:#f8e7e5,stroke:#b3453c
+    style K fill:#e6f1e8,stroke:#3f7d54
+```
+
+Uma requisição só chega e o `urls.py` decide, pelo endereço e pelo método,
+qual das duas rotas ela segue. Depois disso o caminho é bem diferente:
+uma rota vai buscar no banco, a outra passa por uma validação antes de
+decidir se salva ou devolve erro.
+
+<details>
+<summary><strong>Feature 1: como a busca funciona (clique pra expandir)</strong></summary>
+
+```python
+# acervo/views.py
+filtro = Q()
+if nome:
+    filtro &= Q(titulo__icontains=nome) | Q(autor__icontains=nome)
+if tipo:
+    filtro &= Q(tipo_acervo=tipo)
+if categoria:
+    filtro &= Q(categoria=categoria)
+
+livros = Livro.objects.filter(filtro)
+```
+
+Q() guarda uma condição lógica numa variável, em vez de aplicá-la na hora.
+Isso é necessário aqui porque a busca por texto precisa de OU (título OU
+autor), e a forma simples de filtrar do Django (filter(campo=valor)) só
+sabe fazer E. O `&=` vai encaixando cada novo critério preenchido com E na
+condição toda; se um filtro não foi preenchido, ele simplesmente não
+entra na consulta.
+
+</details>
+
+<details>
+<summary><strong>Feature 2: como a validação funciona (clique pra expandir)</strong></summary>
+
+```python
+# acervo/forms.py
+def clean_ano(self):
+    ano = self.cleaned_data.get('ano')
+    ano_atual = timezone.now().year
+    if ano and ano > ano_atual:
+        raise forms.ValidationError(
+            f'O ano de publicação não pode ser posterior a {ano_atual}.'
+        )
+    return ano
+```
+
+`self.cleaned_data.get('ano')` é um dicionário com os valores já
+convertidos pro tipo certo (aqui, ano já é um int, não uma string vinda do
+input). `timezone.now().year` é só o ano atual de verdade.
+
+`raise forms.ValidationError(...)` é igual a lançar uma exceção em
+qualquer linguagem: interrompe o fluxo normal e carrega uma mensagem. O
+Django captura essa exceção automaticamente, marca o campo ano como
+inválido e guarda a mensagem, que `{{ form.as_p }}` (no template) já sabe
+exibir do lado do campo, sem nenhum código extra nosso.
+
+</details>
+
+### Por que escolhi esses campos e essa regra
+
+O enunciado do P1 pede pra justificar as duas escolhas e explicar o que
+aconteceria se elas não existissem, então deixo isso registrado aqui.
+
+Na Feature 1 busco por título e autor porque é isso que uma pessoa lembra
+quando quer achar um livro, ninguém decora o número do registro dentro do
+sistema. O filtro por categoria faz sentido porque o acervo já é dividido
+em dez classes fixas, diferente de um campo booleano tipo disponível, que
+só tem dois valores possíveis. Sem esse filtro combinado o usuário teria
+que rolar a lista inteira toda vez que quisesse achar algo específico, o
+que não funciona bem num acervo com centenas de livros cadastrados.
+
+Na Feature 2 a regra escolhida foi que o ano de publicação não pode ser
+maior que o ano atual. O motivo é simples: o Django sozinho só garante que
+aquele campo é um número inteiro preenchido, ele não sabe o que esse
+número significa dentro do nosso problema. Sem essa validação daria pra
+cadastrar um livro com ano 3000 sem nenhum aviso, o que não faz sentido
+porque um livro só entra no acervo depois de já ter sido publicado. Essa é
+justamente uma regra que o Django não tem como adivinhar sozinho, porque
+depende de conhecer o domínio do problema, e não só o tipo do dado.
+
 ## Aulas de referência
 
 - **Aula 4 — Django na Prática I**: venv, projeto, app, model, migrações,
