@@ -10,10 +10,11 @@ def lista_livros(request):
     tipo = request.GET.get('tipo', '')
     categoria = request.GET.get('categoria', '')
 
-    # Todos os critérios preenchidos entram na MESMA consulta, combinados
-    # com Q() — em vez de encadear .filter() várias vezes — para não
-    # disparar uma query por filtro quando o usuário combina busca + tipo
-    # + categoria ao mesmo tempo.
+    # Q() é necessário aqui porque a busca por texto exige OR (título OU
+    # autor) — filter(campo=valor) encadeado só expressa AND. Combinar
+    # tudo num único Q() não muda o número de consultas ao banco (o
+    # QuerySet é "lazy": só executa quando o resultado é usado), é só a
+    # forma de escrever OR e AND na mesma condição, como pede o enunciado.
     filtro = Q()
     if nome:
         filtro &= Q(titulo__icontains=nome) | Q(autor__icontains=nome)
