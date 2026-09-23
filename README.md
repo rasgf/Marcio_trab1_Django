@@ -5,11 +5,13 @@ migrações, ORM e Admin) e da **Aula 5** (views, URLs, templates e forms),
 com os requisitos adicionais do trabalho: tipo de acervo, categoria e
 pesquisa.
 
+**[Acessar a Biblioteca (site no ar)](https://biblioteca-098w.onrender.com/)**
 **[Ver o diagrama e a explicação das features da P1 (site)](https://rasgf.github.io/Marcio_trab1_Django/)**
 
-O sistema em si (a Biblioteca rodando de verdade) precisa de um servidor
-Python de verdade, o GitHub Pages não roda Django. Instruções de deploy
-no Render logo abaixo, na seção "Colocando o site no ar".
+O site roda no plano gratuito do Render: se ninguém acessar por um
+tempo ele entra em modo de espera, e a primeira visita depois disso
+demora uns 30 a 50 segundos pra responder. Detalhes do deploy na seção
+"Colocando o site no ar" mais abaixo.
 
 ## Requisitos do trabalho
 
@@ -73,6 +75,11 @@ Acesse:
 - `http://127.0.0.1:8000/admin/` — Django Admin
 
 ## Colocando o site no ar (Render)
+
+Já está publicado em https://biblioteca-098w.onrender.com/, e o Render
+faz redeploy automático a cada push no `main`. Os passos abaixo ficam
+registrados caso precise reconfigurar do zero ou clonar num outro
+projeto.
 
 O repositório já vem pronto pra isso (`render.yaml`, `gunicorn`,
 `whitenoise` pros arquivos estáticos). Falta só conectar sua conta:
