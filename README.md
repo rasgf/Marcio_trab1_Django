@@ -77,10 +77,10 @@ query string:
 
 Exemplo: `/livros/?q=machado&categoria=800`
 
-## Como as duas features do P1 funcionam
+## Como as duas features da P1 funcionam
 
 Essas duas features (busca combinada e validação customizada) fazem parte
-da entrega do P1, além do CRUD das Aulas 4 a 6. Documentei aqui como cada
+da entrega da P1, além do CRUD das Aulas 4 a 6. Documentei aqui como cada
 uma funciona por dentro, pra ficar registrado o motivo de cada escolha.
 
 ### O fluxo da requisição
@@ -163,7 +163,7 @@ exibir do lado do campo, sem nenhum código extra nosso.
 
 ### Por que escolhi esses campos e essa regra
 
-O enunciado do P1 pede pra justificar as duas escolhas e explicar o que
+O enunciado da P1 pede pra justificar as duas escolhas e explicar o que
 aconteceria se elas não existissem, então deixo isso registrado aqui.
 
 Na Feature 1 busco por título e autor porque é isso que uma pessoa lembra
